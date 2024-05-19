@@ -3,7 +3,12 @@ guid: 899a4f801dc1b5cc4a7be020715cf221
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Feet_SuperMat
+    second: {fileID: 2100000, guid: e9aab374a2f041ccd9e2e953c1d41c47, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

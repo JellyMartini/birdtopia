@@ -3,7 +3,12 @@ guid: 6acaa288867d4a6a080600a13e7c1a6c
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blade_SuperMat
+    second: {fileID: 2100000, guid: 8dc3e3600794c5aca9337e13d12667d4, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

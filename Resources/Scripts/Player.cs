@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public CharacterController controller;
+    private GameObject mainCam;
 
     public float MoveSpeed { get; set; }
     public float JumpSpeed { get; set; }
@@ -23,12 +24,20 @@ public class Player : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        mainCam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
     Vector3 GetInput()
     {
-        Vector3 velocity = Vector3.right * Input.GetAxis("Player_Horizontal") + 
-            Vector3.forward * Input.GetAxis("Player_Vertical");
+        float CamY = mainCam.transform.rotation.eulerAngles.y;
+        float CamY_Sin = Mathf.Sin(CamY * Mathf.Deg2Rad);
+        float CamY_Cos = Mathf.Cos(CamY * Mathf.Deg2Rad);
+
+        Vector3 velocity = new Vector3(
+            Input.GetAxis("Player_Vertical") * CamY_Sin + Input.GetAxis("Player_Horizontal") * CamY_Cos,
+            0.0f,
+            Input.GetAxis("Player_Vertical") * CamY_Cos - Input.GetAxis("Player_Horizontal") * CamY_Sin
+        );
 
         if (velocity.magnitude > 1.0f) velocity.Normalize();
 

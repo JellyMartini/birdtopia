@@ -16,6 +16,6 @@ public class Camera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.LookAt(Vector3.Max(player.position, enemy.position) / 2.0f);
+        transform.LookAt((player.position + enemy.position) / 2.0f);
     }
 }
