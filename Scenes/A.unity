@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 239380540}
   - component: {fileID: 239380539}
   - component: {fileID: 239380538}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: ViewModel
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 366130918}
   - component: {fileID: 366130919}
   - component: {fileID: 366130920}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -639,6 +639,8 @@ GameObject:
   - component: {fileID: 1652449300}
   - component: {fileID: 1652449301}
   - component: {fileID: 1652449302}
+  - component: {fileID: 1652449306}
+  - component: {fileID: 1652449305}
   m_Layer: 2
   m_Name: Enemy
   m_TagString: Untagged
@@ -661,7 +663,6 @@ Transform:
   - {fileID: 543450652088441128}
   - {fileID: 543450653555569499}
   - {fileID: 543450653458220623}
-  - {fileID: 2011008371}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -679,6 +680,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 0}
   player: {fileID: 0}
+  tick_interval: 0.5
+  hitDistance: 2.5
+  hitRadius: 1
 --- !u!195 &1652449302
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -694,13 +698,39 @@ NavMeshAgent:
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 2
-  m_AutoTraverseOffMeshLink: 1
+  m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 1
-  m_AutoRepath: 1
+  m_AutoRepath: 0
   m_Height: 2
   m_BaseOffset: 1
   m_WalkableMask: 1
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
+--- !u!135 &1652449305
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652449297}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.66
+  m_Center: {x: 0, y: 1.64, z: 0.88}
+--- !u!135 &1652449306
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652449297}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.05
+  m_Center: {x: 0, y: 0.33, z: -0.1}
 --- !u!1 &1915275137
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,52 +830,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 366130918}
   enemy: {fileID: 1652449300}
---- !u!1 &2011008370
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2011008371}
-  - component: {fileID: 2011008372}
-  m_Layer: 2
-  m_Name: Hurtbox
-  m_TagString: Enemy_Weapon
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2011008371
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2011008370}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.192, z: 0.784}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1652449300}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &2011008372
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2011008370}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.7
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2135041839
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,7 +1693,7 @@ Transform:
   m_LocalRotation: {x: 0.8577553, y: -1.01689314e-13, z: -0.00000040900952, w: 0.5140582}
   m_LocalPosition: {x: -0.000000013840431, y: 0.002640952, z: -0.029025491}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6114344425715599095}
   m_Father: {fileID: 7492932091908679740}
