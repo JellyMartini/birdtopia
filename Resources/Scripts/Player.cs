@@ -7,11 +7,14 @@ public class Player : MonoBehaviour
     public CharacterController controller;
     private GameObject mainCam;
     private GameObject ViewModel;
+    public float enemyPushForce;
 
     public float MoveSpeed { get; set; }
     public float JumpSpeed { get; set; }
     public float Gravity { get; set; }
     public float VerticalAcceleration { get; set; }
+
+    private Item[] inventory;
 
     void Awake()
     {
@@ -27,6 +30,7 @@ public class Player : MonoBehaviour
         ViewModel = GameObject.Find("ViewModel");
         controller = GetComponent<CharacterController>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
+        ViewModel.transform.rotation = Quaternion.Euler(0.0f, mainCam.transform.eulerAngles.y, 0.0f);
     }
 
     Vector3 GetInput()
@@ -34,7 +38,6 @@ public class Player : MonoBehaviour
         float CamY = mainCam.transform.rotation.eulerAngles.y;
         float CamY_Sin = Mathf.Sin(CamY * Mathf.Deg2Rad);
         float CamY_Cos = Mathf.Cos(CamY * Mathf.Deg2Rad);
-        float PlayerRotation = 0.0f;
 
         Vector2 PlayerInputs = new Vector2(Input.GetAxis("Player_Horizontal"), Input.GetAxis("Player_Vertical"));
         
@@ -46,13 +49,16 @@ public class Player : MonoBehaviour
             PlayerInputs.y * CamY_Cos - PlayerInputs.x * CamY_Sin
         );
 
-        ViewModel.transform.rotation = Quaternion.Euler(0.0f, PlayerRotation, 0.0f);
-        
+        if (velocity.magnitude > 0.1f) 
+            ViewModel.transform.LookAt(transform.position + transform.TransformDirection(velocity));
+
+        ViewModel.transform.rotation = Quaternion.Euler(0.0f, ViewModel.transform.rotation.eulerAngles.y, 0.0f);
+
         velocity *= MoveSpeed;
 
         if (controller.isGrounded) VerticalAcceleration = Input.GetAxis("Player_Jump") * JumpSpeed;
         else VerticalAcceleration += Gravity * Time.deltaTime;
-
+       
         return velocity += VerticalAcceleration * Vector3.up;
     }
     // Update is called once per frame
@@ -61,8 +67,9 @@ public class Player : MonoBehaviour
         controller.Move(GetInput() * Time.deltaTime);
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.tag.Equals("Enemy_Weapon")) Debug.Log("Hit");
+        if (other.CompareTag("Enemy"))
+            controller.Move((transform.position - other.transform.position).normalized * enemyPushForce * Time.fixedDeltaTime);
     }
 }
