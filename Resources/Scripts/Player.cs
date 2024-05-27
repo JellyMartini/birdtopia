@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -9,12 +10,16 @@ public class Player : MonoBehaviour
     private GameObject ViewModel;
     public float enemyPushForce;
 
+    public float Health { get; set; }
+    public float Attack { get; set; }
+    public float Defense { get; set; }
+
     public float MoveSpeed { get; set; }
     public float JumpSpeed { get; set; }
     public float Gravity { get; set; }
     public float VerticalAcceleration { get; set; }
 
-    private Item[] inventory;
+    private List<Item> inventory;
 
     void Awake()
     {
@@ -65,11 +70,21 @@ public class Player : MonoBehaviour
     void Update()
     {
         controller.Move(GetInput() * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.Keypad7)) AddItem(Item.item_type.HEALTH, Random.value * 10.0f);
+        if (Input.GetKeyDown(KeyCode.Keypad8)) AddItem(Item.item_type.ATTACK_UP, Random.value * 10.0f);
+        if (Input.GetKeyDown(KeyCode.Keypad9)) AddItem(Item.item_type.DEFENSE_UP, Random.value * 10.0f);
+        if (Input.GetKeyDown(KeyCode.KeypadPlus)) AddItem(Item.item_type.DAMAGE, Random.value * 10.0f);
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Enemy"))
             controller.Move((transform.position - other.transform.position).normalized * enemyPushForce * Time.fixedDeltaTime);
+    }
+
+    void AddItem(Item.item_type itemType, float itemValue)
+    {
+        inventory.Add(new Item(itemType, itemValue));
+        Debug.Log(inventory[inventory.Count - 1]);
     }
 }
