@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,7 +11,8 @@ public class Player : MonoBehaviour
     private GameObject mainCam;
     private GameObject ViewModel;
     public float enemyPushForce;
-    private GameObject inventoryUI;
+    private TextMeshProUGUI inventoryUI;
+    private Animator fistAnim;
 
     public float Health { get; set; }
     public float Attack { get; set; }
@@ -38,11 +40,15 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
         ViewModel.transform.rotation = Quaternion.Euler(0.0f, mainCam.transform.eulerAngles.y, 0.0f);
-        inventory = new List<Item>();
-        inventoryUI = GameObject.Find("Text (TMP)");
-        Debug.Log(inventoryUI.GetComponentsInChildren());
-        AddItem(Item.item_type.HEALTH, 40.0f);
-        AddItem(Item.item_type.DAMAGE, 20.0f);
+        inventory = new List<Item>()
+        {
+            new Item(Item.item_type.HEALTH, 40.0f),
+            new Item(Item.item_type.DAMAGE, 20.0f)
+        };
+        inventoryUI = GameObject.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
+        UpdateUI();
+        fistAnim = GetComponentInChildren<Animator>();
+        Debug.Log(fistAnim.name);
     }
 
     Vector3 GetInput()
@@ -68,10 +74,13 @@ public class Player : MonoBehaviour
 
         velocity *= MoveSpeed;
 
-        if (controller.isGrounded) VerticalAcceleration = Input.GetAxis("Player_Jump") * JumpSpeed;
-        else VerticalAcceleration += Gravity * Time.deltaTime;
+        if (Input.GetAxis("Player_Jump") > 0.9f) fistAnim.SetBool("playAnim", true);
+        else fistAnim.SetBool("playAnim", false);
+
+        // if (controller.isGrounded) VerticalAcceleration = Input.GetAxis("Player_Jump") * JumpSpeed;
+        // else VerticalAcceleration += Gravity * Time.deltaTime;
        
-        return velocity += VerticalAcceleration * Vector3.up;
+        return velocity;// += VerticalAcceleration * Vector3.up;
     }
     // Update is called once per frame
     void Update()
@@ -81,7 +90,6 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad8)) AddItem(Item.item_type.ATTACK_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.Keypad9)) AddItem(Item.item_type.DEFENSE_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.KeypadPlus)) AddItem(Item.item_type.DAMAGE, Random.value * 10.0f);
-        UpdateUI();
     }
 
     private void OnTriggerStay(Collider other)
@@ -93,10 +101,11 @@ public class Player : MonoBehaviour
     void AddItem(Item.item_type itemType, float itemValue)
     {
         inventory.Add(new Item(itemType, itemValue));
+        UpdateUI();
     }
 
     void UpdateUI()
     {
-        //inventoryUI.text = "Q: " + inventory[0].name + ", E: " + inventory[1].name;
+        inventoryUI.text = "Q: " + inventory[0].itemType + ", E: " + inventory[1].itemType;
     }
 }
