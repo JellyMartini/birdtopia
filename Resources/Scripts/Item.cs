@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class Item
 {
     public enum item_type { HEALTH, ATTACK_UP, DEFENSE_UP, DAMAGE };
-    private item_type itemType;
-    private float itemValue;
+    public item_type itemType;
+    public float itemValue;
 
     public Item(item_type _itemType, float _itemValue)
     {

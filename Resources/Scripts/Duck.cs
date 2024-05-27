@@ -53,10 +53,9 @@ public class Duck : Enemy
     {
         if (Physics.SphereCast(transform.position, hitRadius, transform.TransformDirection(Vector3.forward), out RaycastHit sphereHit, hitDistance, ~playerLayerMask))
             return true;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit lineHit, hitDistance, playerLayerMask))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit lineHit, hitDistance, ~playerLayerMask))
             return true;
         return false;
     }
-
     
 }

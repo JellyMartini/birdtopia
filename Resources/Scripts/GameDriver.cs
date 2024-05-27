@@ -16,6 +16,7 @@ public class GameDriver : MonoBehaviour
     {
         Instantiate(Resources.Load<GameObject>("Prefabs/Player"));
     }
+
     // Start is called before the first frame update
     void Start()
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,6 +10,7 @@ public class Player : MonoBehaviour
     private GameObject mainCam;
     private GameObject ViewModel;
     public float enemyPushForce;
+    private GameObject inventoryUI;
 
     public float Health { get; set; }
     public float Attack { get; set; }
@@ -19,7 +21,7 @@ public class Player : MonoBehaviour
     public float Gravity { get; set; }
     public float VerticalAcceleration { get; set; }
 
-    private List<Item> inventory;
+    public List<Item> inventory;
 
     void Awake()
     {
@@ -36,6 +38,11 @@ public class Player : MonoBehaviour
         controller = GetComponent<CharacterController>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera");
         ViewModel.transform.rotation = Quaternion.Euler(0.0f, mainCam.transform.eulerAngles.y, 0.0f);
+        inventory = new List<Item>();
+        inventoryUI = GameObject.Find("Text (TMP)");
+        Debug.Log(inventoryUI.GetComponentsInChildren());
+        AddItem(Item.item_type.HEALTH, 40.0f);
+        AddItem(Item.item_type.DAMAGE, 20.0f);
     }
 
     Vector3 GetInput()
@@ -74,6 +81,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad8)) AddItem(Item.item_type.ATTACK_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.Keypad9)) AddItem(Item.item_type.DEFENSE_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.KeypadPlus)) AddItem(Item.item_type.DAMAGE, Random.value * 10.0f);
+        UpdateUI();
     }
 
     private void OnTriggerStay(Collider other)
@@ -85,6 +93,10 @@ public class Player : MonoBehaviour
     void AddItem(Item.item_type itemType, float itemValue)
     {
         inventory.Add(new Item(itemType, itemValue));
-        Debug.Log(inventory[inventory.Count - 1]);
+    }
+
+    void UpdateUI()
+    {
+        //inventoryUI.text = "Q: " + inventory[0].name + ", E: " + inventory[1].name;
     }
 }
