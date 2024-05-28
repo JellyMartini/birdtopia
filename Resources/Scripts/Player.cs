@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +12,8 @@ public class Player : MonoBehaviour
     public float enemyPushForce;
     private TextMeshProUGUI inventoryUI;
     private Animator fistAnim;
+
+    private Material playerMat;
 
     public float Health { get; set; }
     public float Attack { get; set; }
@@ -48,7 +49,8 @@ public class Player : MonoBehaviour
         inventoryUI = GameObject.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
         UpdateUI();
         fistAnim = GetComponentInChildren<Animator>();
-        Debug.Log(fistAnim.name);
+        Debug.Log(inventory.Count);
+        playerMat = Resources.Load<Material>("Materials/Rough");
     }
 
     Vector3 GetInput()
@@ -74,7 +76,10 @@ public class Player : MonoBehaviour
 
         velocity *= MoveSpeed;
 
-        if (Input.GetAxis("Player_Jump") > 0.9f) fistAnim.SetBool("playAnim", true);
+        if (Input.GetAxis("Player_Jump") == 1.0f)
+        {
+            fistAnim.SetBool("playAnim", true);
+        }
         else fistAnim.SetBool("playAnim", false);
 
         // if (controller.isGrounded) VerticalAcceleration = Input.GetAxis("Player_Jump") * JumpSpeed;
@@ -90,11 +95,34 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Keypad8)) AddItem(Item.item_type.ATTACK_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.Keypad9)) AddItem(Item.item_type.DEFENSE_UP, Random.value * 10.0f);
         if (Input.GetKeyDown(KeyCode.KeypadPlus)) AddItem(Item.item_type.DAMAGE, Random.value * 10.0f);
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Debug.Log("Used " + inventory[0].itemType);
+            inventory.RemoveAt(0);
+            UpdateUI();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log("Used " + inventory[1].itemType);
+            inventory.RemoveAt(1);
+            UpdateUI();
+        }
+        if (Input.GetAxis("Cancel") != 0.0f) Application.Quit();
+    }
+
+    private void FixedUpdate()
+    {
+        if (fistAnim.GetBool("playAnim") && 
+            ((fistAnim.GetCurrentAnimatorStateInfo(0).normalizedTime % fistAnim.GetCurrentAnimatorStateInfo(0).length) > 0.3f 
+            && (fistAnim.GetCurrentAnimatorStateInfo(0).normalizedTime % fistAnim.GetCurrentAnimatorStateInfo(0).length) < 0.4f)) 
+            RaycastForEnemy();
+
+       if (fistAnim.GetBool("playAnim")) Debug.Log(fistAnim.GetCurrentAnimatorStateInfo(0).normalizedTime % fistAnim.GetCurrentAnimatorStateInfo(0).length);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.CompareTag("Duck"))
             controller.Move((transform.position - other.transform.position).normalized * enemyPushForce * Time.fixedDeltaTime);
     }
 
@@ -106,6 +134,23 @@ public class Player : MonoBehaviour
 
     void UpdateUI()
     {
-        inventoryUI.text = "Q: " + inventory[0].itemType + ", E: " + inventory[1].itemType;
+        if (inventory.Count >= 2) inventoryUI.text = "Q: " + inventory[0].itemType + ", E: " + inventory[1].itemType;
+        else if (inventory.Count == 1) inventoryUI.text = "Q: " + inventory[0].itemType + ", E: ";
+        else inventoryUI.text = "Q: " + ", E: ";
+        return;
+
+    }
+
+    bool RaycastForEnemy()
+    {
+        if (Physics.Raycast(transform.position, ViewModel.transform.forward, out RaycastHit hit, 2.0f, ~1000000))
+        {
+            Debug.DrawLine(transform.position, transform.position + transform.TransformDirection(ViewModel.transform.forward) * 2.0f, Color.green);
+            Destroy(hit.transform.gameObject);
+            ViewModel.GetComponent<MeshRenderer>().material = playerMat;
+            return true;
+        }
+        Debug.DrawLine(transform.position, transform.position + transform.TransformDirection(ViewModel.transform.forward) * 2.0f, Color.red);
+        return false;
     }
 }

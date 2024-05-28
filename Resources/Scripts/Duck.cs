@@ -13,6 +13,9 @@ public class Duck : Enemy
     public float tick_interval, hitDistance, hitRadius;
     private LayerMask playerLayerMask = 6;
 
+    private Material debugMat;
+    private Material playerMat;
+
     private int hit_cooldown, hit_cooldown_max;
     // Start is called before the first frame update
     void Start()
@@ -28,6 +31,9 @@ public class Duck : Enemy
 
         Health = 100.0f;
         Damage = 10.0f;
+
+        playerMat = Resources.Load<Material>("Materials/Rough");
+        debugMat = Resources.Load<Material>("Materials/DebugMat");
     }
 
     // Update is called once per frame
@@ -46,16 +52,22 @@ public class Duck : Enemy
                 Debug.DrawLine(transform.position, transform.position + transform.TransformDirection(Vector3.forward) * hitDistance, Color.green);
             }
             else Debug.DrawLine(transform.position, transform.position + transform.TransformDirection(Vector3.forward) * hitDistance, Color.red);
+        if (hit_cooldown > hit_cooldown_max / 2.0f) player.GetComponentInChildren<MeshRenderer>().material = playerMat;
         hit_cooldown++;
     }
 
     private bool ShootRay()
     {
         if (Physics.SphereCast(transform.position, hitRadius, transform.TransformDirection(Vector3.forward), out RaycastHit sphereHit, hitDistance, ~playerLayerMask))
+        {
+            sphereHit.transform.GetComponent<MeshRenderer>().material = debugMat;
             return true;
+        }
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit lineHit, hitDistance, ~playerLayerMask))
+        {
+            lineHit.transform.GetComponent<MeshRenderer>().material = debugMat;
             return true;
+        }
         return false;
     }
-    
 }
